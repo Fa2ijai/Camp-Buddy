@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/user");
 
 //Get token from model,create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {

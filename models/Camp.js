@@ -40,12 +40,12 @@ const CampSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-// Cascade delete appiontments when a hospital is deleted
+//Cascade delete bookings when a camp is deleted
 CampSchema.pre(
   `deleteOne`,
   { document: true, query: false },
   async function (next) {
-    console.log(`Bookings being removed from camp ${this._id}`);
+    console.log(`Booking being removed form camp ${this._id}`);
     await this.model("Booking").deleteMany({ camp: this._id });
     next();
   }
