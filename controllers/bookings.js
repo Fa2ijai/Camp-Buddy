@@ -63,6 +63,13 @@ exports.addBooking = async (req, res, next) => {
       });
     }
     req.body.user = req.user.id;
+    //Check if user is banned
+    if (req.user.ban >= Date.now()) {
+      return res.status(400).json({
+        success: false,
+        message: `User with the id of ${req.user.id} is banned until ${req.user.ban}`,
+      });
+    }
     //Check for existed Booking
     const existedBookings = await Booking.find({ user: req.user.id });
     //If the user is not an admin,they can only create 3 booking.
