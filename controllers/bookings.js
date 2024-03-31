@@ -8,7 +8,7 @@ exports.getBookings = async (req, res, next) => {
   let query;
   //   General users can see only their bookings
   if (req.user.role !== "admin") {
-    query = await Appointment.find({ user: req.user.id });
+    query = await Booking.find({ user: req.user.id });
   } else {
     if (req.params.campId) {
       console.log(req.params.campId);
@@ -33,7 +33,7 @@ exports.getBookings = async (req, res, next) => {
 //@access Public
 exports.getBooking = async (req, res, next) => {
   try {
-    const booking = await Appointment.findById(req.params.id);
+    const booking = await Booking.findById(req.params.id);
     if (!booking) {
       return res.status(404).json({
         success: false,
@@ -64,7 +64,7 @@ exports.addBooking = async (req, res, next) => {
     }
     req.body.user = req.user.id;
     //Check for existed Booking
-    const existedBookings = await Appointment.find({ user: req.user.id });
+    const existedBookings = await Booking.find({ user: req.user.id });
     //If the user is not an admin,they can only create 3 booking.
     if (existedBookings.length >= 3 && req.user.role !== "admin") {
       return res.status(400).json({
@@ -72,7 +72,7 @@ exports.addBooking = async (req, res, next) => {
         message: `User with the id of ${req.user.id} has already made 3 bookings`,
       });
     }
-    const booking = await Boonking.create(req.body);
+    const booking = await Booking.create(req.body);
     res.status(200).json({ success: true, data: booking });
   } catch (err) {
     console.log(err);
