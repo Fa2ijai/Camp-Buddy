@@ -8,14 +8,14 @@ const {
 } = require("../controllers/camps");
 
 //Include other resource routers
-// const bookingRouter = require("./bookings");
+const bookingRouter = require("./bookings");
 
 const router = express.Router();
 
 const { protect, authorize } = require("../middleware/auth");
 
 //Re-route into other resource routers
-// router.use("/:campId/bookings/", bookingRouter);
+router.use("/:campId/bookings/", bookingRouter);
 
 router.route("/").get(getCamps).post(protect, authorize("admin"), createCamp);
 router
