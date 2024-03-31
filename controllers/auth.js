@@ -24,7 +24,11 @@ const sendTokenResponse = (user, statusCode, res) => {
 exports.register = async (req, res, next) => {
   try {
     const { username, tel, email, password, role } = req.body;
-
+    if (!username || !tel || !email || !password || !role) {
+      return res
+        .status(400)
+        .json({ sucess: false, msg: "Please enter all fields" });
+    }
     const user = await User.create({
       username: username,
       tel: tel,
