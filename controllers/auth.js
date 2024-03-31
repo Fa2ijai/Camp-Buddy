@@ -57,7 +57,7 @@ exports.login = async (req, res, next) => {
   if (!username || !password) {
     return res
       .status(400)
-      .json({ sucess: false, msg: "Please provide an email and password" });
+      .json({ sucess: false, msg: "Please provide an username and password" });
   }
 
   //Check for user
