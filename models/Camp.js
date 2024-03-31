@@ -30,7 +30,7 @@ const CampSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a telephone number"],
       match: [
-        /^0\d{9}$/,
+        /^(02\d{7}|0\d{9})$/,
         "Please enter a valid telephone number starting with 0 and consisting of 10 digits",
       ],
     },
@@ -40,19 +40,19 @@ const CampSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-//Cascade delete appiontments when a hospital is deleted
-HospitalSchema.pre(
+// Cascade delete appiontments when a hospital is deleted
+CampSchema.pre(
   `deleteOne`,
   { document: true, query: false },
   async function (next) {
-    console.log(`Appointments being removed form hospital ${this._id}`);
-    await this.model("Appointment").deleteMany({ hospital: this._id });
+    console.log(`Bookings being removed from camp ${this._id}`);
+    await this.model("Booking").deleteMany({ camp: this._id });
     next();
   }
 );
 
 //Reverse populate with virtuals
-HospitalSchema.virtual(`bookings`, {
+CampSchema.virtual(`bookings`, {
   ref: "Booking",
   localField: "_id",
   foreignField: "camp",
