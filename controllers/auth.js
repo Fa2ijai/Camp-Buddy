@@ -76,11 +76,19 @@ exports.login = async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 };
 
-//At the end of file
 // @desc    Get current Logged in user
 // @route   Get /api/v1/auth/me
 // @access  Private
 exports.getMe = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user._id);
   res.status(200).json({ success: true, data: user });
+};
+
+//At the end of file
+// @desc    Get current Logged in user
+// @route   Get /api/v1/auth/me
+// @access  Private
+exports.logout = async (req, res, next) => {
+  res.clearCookie("token"); // Set the value to an empty string
+  res.status(200).json({ success: true, data: {} });
 };
