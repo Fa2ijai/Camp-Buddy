@@ -23,14 +23,10 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @access  Public
 exports.register = async (req, res, next) => {
   try {
-    const { username, tel, email, password, role } = req.body;
-    if (!username || !tel || !email || !password || !role) {
-      return res
-        .status(400)
-        .json({ sucess: false, msg: "Please enter all fields" });
-    }
+    const { name, tel, email, password, role } = req.body;
+
     const user = await User.create({
-      username: username,
+      name: name,
       tel: tel,
       email: email,
       password: password,
@@ -51,17 +47,17 @@ exports.register = async (req, res, next) => {
 // @route   POST /api/v1/auth/login
 // @access  Public
 exports.login = async (req, res, next) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  //Validate username & password
-  if (!username || !password) {
+  //Validate email & password
+  if (!email || !password) {
     return res
       .status(400)
-      .json({ sucess: false, msg: "Please provide an username and password" });
+      .json({ sucess: false, msg: "Please provide an email and password" });
   }
 
   //Check for user
-  const user = await User.findOne({ username }).select("+password");
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
     return res.status(400).json({ sucess: false, msg: "Invalid credentials" });
