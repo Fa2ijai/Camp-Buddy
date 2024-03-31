@@ -14,11 +14,6 @@ const sendTokenResponse = (user, statusCode, res) => {
   }
   res.status(statusCode).cookie("token", token, options).json({
     sucess: true,
-    //add for frontend
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    //end for frontend
     token,
   });
 };
@@ -28,10 +23,10 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @access  Public
 exports.register = async (req, res, next) => {
   try {
-    const { name, tel, email, password, role } = req.body;
+    const { username, tel, email, password, role } = req.body;
 
     const user = await User.create({
-      name: name,
+      username: username,
       tel: tel,
       email: email,
       password: password,
@@ -52,17 +47,17 @@ exports.register = async (req, res, next) => {
 // @route   POST /api/v1/auth/login
 // @access  Public
 exports.login = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  //Validate email & password
-  if (!email || !password) {
+  //Validate username & password
+  if (!username || !password) {
     return res
       .status(400)
       .json({ sucess: false, msg: "Please provide an email and password" });
   }
 
   //Check for user
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ username }).select("+password");
 
   if (!user) {
     return res.status(400).json({ sucess: false, msg: "Invalid credentials" });
