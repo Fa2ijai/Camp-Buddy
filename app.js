@@ -8,6 +8,11 @@ const auth = require("./routes/auth");
 const camps = require("./routes/camps");
 const users = require("./routes/users");
 const bookings = require("./routes/bookings");
+const sanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
+const { xss } = require("express-xss-sanitizer");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp");
 
 //Load env vars
 dotenv.config({ path: "./config/config.env" });
@@ -19,6 +24,25 @@ const app = express();
 
 //Body parser
 app.use(express.json());
+
+//Sanitize data
+app.use(sanitize());
+
+//Set security headers
+app.use(helmet());
+
+//Prevent XSS attacks
+app.use(xss());
+
+//Rate limiting
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, //10mins
+  max: 1,
+});
+app.use(limiter);
+
+//Prevent http param pollution
+app.use(hpp());
 
 //Cookie parser
 app.use(cookieParser());
