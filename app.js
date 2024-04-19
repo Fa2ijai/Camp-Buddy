@@ -2,7 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
-
+// const cronJob = require("./scripts/cron");
+const cron = require("node-cron");
 //Route files
 const auth = require("./routes/auth");
 const camps = require("./routes/camps");
@@ -13,12 +14,22 @@ const helmet = require("helmet");
 const { xss } = require("express-xss-sanitizer");
 const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
+const emails = require("./routes/emails");
+const { sendEmail } = require("./controllers/emails");
 
 //Load env vars
 dotenv.config({ path: "./config/config.env" });
 
 //Connect to data base
 connectDB();
+
+// Define the cron job schedule
+const cronJob = cron.schedule("00 00 * * *", async () => {
+  await sendEmail();
+});
+
+// Start the cron job
+cronJob.start();
 
 const app = express();
 
@@ -37,7 +48,7 @@ app.use(xss());
 //Rate limiting
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, //10mins
-  max: 1,
+  max: 100,
 });
 app.use(limiter);
 
@@ -52,6 +63,7 @@ app.use("/api/v1/auth", auth);
 app.use("/api/v1/camps", camps);
 app.use("/api/v1/bookings", bookings);
 app.use("/api/v1/users", users);
+app.use("/api/v1/emails", emails);
 
 const PORT = process.env.PORT || 5000;
 
